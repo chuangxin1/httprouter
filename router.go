@@ -324,6 +324,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if root := r.trees[req.Method]; root != nil {
 		if handle, ps, tsr := root.getValue(path); handle != nil {
 			req = setVars(req, ps)
+			req = setCurrentPath(req, path)
 			handle(w, req)
 			return
 		} else if req.Method != "CONNECT" && path != "/" {

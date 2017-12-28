@@ -7,7 +7,7 @@ import (
 
 const (
 	varsKey  = `httprouter_route_vars`
-	routeKey = `httprouter_route`
+	routeKey = `httprouter_route_path`
 )
 
 // ContextVars returns the route variables for the current Context, if any.
@@ -16,6 +16,14 @@ func ContextVars(ctx context.Context) map[string]string {
 		return rv.(map[string]string)
 	}
 	return nil
+}
+
+// ContextRoutePath current route
+func ContextRoutePath(ctx context.Context) string {
+	if rv := ctx.Value(routeKey); rv != nil {
+		return rv.(string)
+	}
+	return ""
 }
 
 // Vars returns the route variables for the current request, if any.
@@ -28,6 +36,10 @@ func Vars(r *http.Request) map[string]string {
 
 func setVars(r *http.Request, val interface{}) *http.Request {
 	return contextSet(r, varsKey, val)
+}
+
+func setCurrentPath(r *http.Request, val interface{}) *http.Request {
+	return contextSet(r, routeKey, val)
 }
 
 func contextGet(r *http.Request, key interface{}) interface{} {
