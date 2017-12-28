@@ -42,12 +42,16 @@ import (
     "log"
 )
 
-func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func Index(w http.ResponseWriter, r *http.Request) {
     fmt.Fprint(w, "Welcome!\n")
 }
 
-func Hello(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    fmt.Fprintf(w, "hello, %s!\n", ps.ByName("name"))
+func Hello(w http.ResponseWriter, r *http.Request) {
+	var name string
+	if vars := httprouter.Vars(); vars != nil {
+		name, _ = vars["name"]
+	}
+  fmt.Fprintf(w, "hello, %s!\n", name)
 }
 
 func main() {
@@ -193,13 +197,13 @@ import (
 )
 
 func BasicAuth(h httprouter.Handle, requiredUser, requiredPassword string) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		// Get the Basic Authentication credentials
 		user, password, hasAuth := r.BasicAuth()
 
 		if hasAuth && user == requiredUser && password == requiredPassword {
 			// Delegate request to the given handle
-			h(w, r, ps)
+			h(w, r)
 		} else {
 			// Request Basic Authentication otherwise
 			w.Header().Set("WWW-Authenticate", "Basic realm=Restricted")
@@ -208,11 +212,11 @@ func BasicAuth(h httprouter.Handle, requiredUser, requiredPassword string) httpr
 	}
 }
 
-func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Not protected!\n")
 }
 
-func Protected(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func Protected(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Protected!\n")
 }
 
