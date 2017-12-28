@@ -5,9 +5,11 @@ import (
 	"net/http"
 )
 
+type contextKey string
+
 const (
-	varsKey  = `httprouter_route_vars`
-	routeKey = `httprouter_route_path`
+	varsKey  contextKey = `httprouter_route_vars`
+	routeKey            = `httprouter_route_path`
 )
 
 // ContextVars returns the route variables for the current Context, if any.
